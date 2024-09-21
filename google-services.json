@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "997996838465",
+    "project_id": "seminarhallbooking-4c494",
+    "storage_bucket": "seminarhallbooking-4c494.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997996838465:android:57e3328c11607cde4750c0",
+        "android_client_info": {
+          "package_name": "com.example.emptyactivity"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAN4nJeMAw4tvZB-ag7VWcnMz8A4DPo9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

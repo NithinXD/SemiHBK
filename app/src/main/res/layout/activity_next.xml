@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/CardView.Dark"
+    android:background="#f8eeff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="0dp"
+    android:textAlignment="center">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/book_title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            android:textStyle="bold|italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextDate"
+            android:layout_width="352dp"
+            android:layout_height="54dp"
+            android:autofillHints="@string/pick_up_date"
+            android:backgroundTint="#C82121"
+            android:ems="10"
+            android:focusable="false"
+            android:hint="@string/pick_up_date"
+            android:inputType="date"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="#4C4C4C"
+            android:textSize="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.576"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.148" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="147dp"
+            android:layout_height="55dp"
+            android:text="@string/book_slots"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.878"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.904" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="369dp"
+            android:layout_height="382dp"
+            android:background="#D4F1F4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.619"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.448">
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="132dp"
+                android:layout_height="56dp"
+                android:text="@string/time_slot_1"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.065"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.049" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="132dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/time_slot_2"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.065"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button4"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/button6"
+                android:layout_width="132dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/time_slot_3"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.065"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button5"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/button7"
+                android:layout_width="132dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/time_slot_4"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.065"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button6"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/button8"
+                android:layout_width="132dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="76dp"
+                android:text="@string/time_slot_5"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/button4"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.049" />
+
+            <Button
+                android:id="@+id/button9"
+                android:layout_width="132dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="76dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/time_slot_6"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/button5"
+                app:layout_constraintTop_toBottomOf="@+id/button8"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/button10"
+                android:layout_width="132dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="76dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/time_slot_7"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/button6"
+                app:layout_constraintTop_toBottomOf="@+id/button9"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/button11"
+                android:layout_width="132dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="76dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/time_slot_8"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/button7"
+                app:layout_constraintTop_toBottomOf="@+id/button10"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/button12"
+                android:layout_width="132dp"
+                android:layout_height="56dp"
+                android:text="@string/time_slot_9"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.95" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="146dp"
+            android:layout_height="55dp"
+            android:text="@string/check_slots"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.196"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.904" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="121dp"
+            android:layout_height="33dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Enter Date:"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.105"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.082" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

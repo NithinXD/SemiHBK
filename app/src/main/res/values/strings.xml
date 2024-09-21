@@ -1,0 +1,92 @@
+<!-- res/values/strings.xml -->
+<resources>
+    <string name="app_name">Seminar Hall Booking</string>
+    <string name="college_name">Thiagarajar College Of Engineering</string>
+    <string name="department_name">Department Of Information Technology</string>
+    <string name="dept_IT">IT</string>
+    <string name="dept_CSE">CSE</string>
+    <string name="dept_ECE">ECE</string>
+    <string name="dept_EEE">EEE</string>
+    <string name="dept_CIVIL">CIVIL</string>
+    <string name="hint_username">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="button_login">Login</string>
+    <string name="book_title">BOOK YOUR SLOTS</string>
+    <string name="hint_date">Enter Date</string>
+    <string name="hint_pick_up_date">dd/mm/yyyy</string>
+    <string name="pick_up_date">Select Date</string>
+    <string name="channel_name">Confirm Booking</string>
+    <string name="button_register">Register</string>
+    <string name="channel_description">Are you certain you wish to confirm the booking of this time slot?</string>
+    <string name="menu_break">9.00-10.00</string>
+    <string name="menu_lunch">10.00-11.00</string>
+    <string name="menu_forenoon">Breaktime</string>
+    <string name="menu_afternoon">11.15-12.15</string>
+    <string name="menu_fullday">12.15-1.15</string>
+    <string name="menu_lunch_break">Lunch Break</string>
+    <string name="menu_2_15">2.15-3.15</string>
+    <string name="menu_3_15">3.15-4.15</string>
+    <string name="menu_evening">Evening</string>
+    <string name="menu_forenoon_2">Forenoon</string>
+    <string name="menu_afternoon_2">Afternoon</string>
+    <string name="menu_full_day">Full day</string>
+
+
+    <!-- String for the hint of the EditText for picking up date -->
+
+    <!-- Strings for the various buttons -->
+    <string name="book_slots">Book SLOTS</string>
+    <string name="check_slots">Check Slots</string>
+    <string name="delete_booking">DELETE BOOKING</string>
+    <string name="update">UPDATE</string>
+
+    <!-- Strings for time slots -->
+    <string name="time_slot_1">9.00-10.00</string>
+    <string name="time_slot_2">10.00-11.00</string>
+    <string name="time_slot_3">11.00-11.15</string>
+    <string name="time_slot_4">11.15-12.15</string>
+    <string name="time_slot_5">12.15-1.15</string>
+    <string name="time_slot_6">1.15-2.15</string>
+    <string name="time_slot_7">2.15-3.15</string>
+    <string name="time_slot_8">3.15-4.15</string>
+    <string name="time_slot_9">4.15-5.00</string>
+
+    <!-- About Us Text -->
+    <string name="about_us_text">
+        Welcome to the IT Department Seminar Hall Booking System. At TCE College, we are committed to providing a seamless and efficient experience for managing seminar hall bookings within the IT Department. Our goal is to facilitate an organized and user-friendly platform that supports the diverse needs of our faculty, students, and staff.
+    </string>
+
+    <!-- Mission Statement -->
+    <string name="mission_statement">
+        Our mission is to streamline the process of reserving seminar halls for academic and extracurricular activities, ensuring that all events are efficiently scheduled and managed. We strive to offer a robust and intuitive system that simplifies the booking process, enhances communication, and optimizes the use of our seminar facilities.
+    </string>
+
+    <!-- Contact Us -->
+    <string name="contact_us_info">
+        For any questions or assistance, please contact our support team:\n\n
+        Email:  marit@tce.edu\n
+        Phone: +91 9943012606\n
+        Office: Staff Room, IT Department, TCE College
+    </string>
+
+    <!-- Our Team -->
+    <string name="our_team_info">
+        Our team comprises dedicated professionals who are passionate about improving the seminar booking experience:\n\n
+        Dr. C. Deisy - Head of IT Department\n
+        Dr. M. AkilaRani - Assistant Professor\n\n
+        Special thanks to:\n
+        Srisa T G - App Developer\n
+        Naga Harshini K K - App Developer
+    </string>
+
+
+    <string name="hint_admin_username">Admin Email</string>
+    <string name="hint_admin_password">Admin Password</string>
+    <string name="switch_admin_mode">Admin Mode</string>
+
+
+
+
+
+
+</resources>
