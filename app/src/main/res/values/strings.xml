@@ -84,7 +84,19 @@
     <string name="hint_admin_password">Admin Password</string>
     <string name="switch_admin_mode">Admin Mode</string>
 
-
+    <string-array name="hall_names">
+        <item>All</item>
+        <item>KK Hall</item>
+        <item>KS Hall</item>
+        <item>Seminar Hall</item>
+        <item>IT Seminar Hall</item>
+        <item>CSE Seminar Hall</item>
+        <item>ECE Seminar Hall</item>
+        <item>EEE Seminar Hall</item>
+        <item>Civil Seminar Hall</item>
+        <item>Mech Seminar Hall</item>
+        <!-- Add more hall names as needed -->
+    </string-array>
 
 
 

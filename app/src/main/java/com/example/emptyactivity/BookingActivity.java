@@ -11,32 +11,37 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 public class BookingActivity extends AppCompatActivity {
 
     private EditText nameEditText, departmentEditText, purposeEditText;
     private Button submitButton;
-    private String selectedDate, selectedTimeSlot;
+    private String selectedDate, selectedHall;
+    private List<String> selectedTimeSlots; // List to hold multiple selected time slots
     private SQLiteDatabase database;
 
     private FirebaseFirestore db;
-    private String userEmail; // Variable to hold user email
+    private String userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.booking);
 
+        selectedHall = getIntent().getStringExtra("selected_hall");
         selectedDate = getIntent().getStringExtra("selected_date");
-        selectedTimeSlot = getIntent().getStringExtra("selected_time_slot");
-        userEmail = getIntent().getStringExtra("user_email"); // Retrieve user email
+        selectedTimeSlots = getIntent().getStringArrayListExtra("selected_time_slots"); // Get the list of selected time slots
+        userEmail = getIntent().getStringExtra("username");
 
         TextView titleTextView = findViewById(R.id.titleTextView);
-        titleTextView.setText("Selected Date: " + selectedDate + "\nSelected Time Slot: " + selectedTimeSlot);
+        titleTextView.setText("Selected Hall: " + selectedHall +
+                "\nSelected Date: " + selectedDate +
+                "\nSelected Time Slots: " + String.join(", ", selectedTimeSlots));
 
         nameEditText = findViewById(R.id.nameEditText);
         departmentEditText = findViewById(R.id.departmentEditText);
@@ -64,17 +69,15 @@ public class BookingActivity extends AppCompatActivity {
             String purpose = purposeEditText.getText().toString();
 
             db = FirebaseFirestore.getInstance();
-            // Check if all fields are filled
 
             if (!name.isEmpty() && !department.isEmpty() && !purpose.isEmpty()) {
-                insertData(selectedDate, selectedTimeSlot, name, department, purpose);
+                insertData(selectedDate, selectedTimeSlots, name, department, purpose);
 
-                // Save booking request to Firestore with status "pending"
-                db.collection("bookings").add(new BookingRequest(name, department, purpose, selectedDate, selectedTimeSlot, "pending", userEmail))
+                // Save all the selected time slots in a single booking request
+                db.collection("bookings").add(new BookingRequest(name, department, purpose, selectedDate, selectedHall, selectedTimeSlots, "pending", userEmail))
                         .addOnSuccessListener(documentReference -> {
                             Toast.makeText(BookingActivity.this, "Booking request sent", Toast.LENGTH_SHORT).show();
-                            // Go back to the previous activity
-                            finish();
+                            finish(); // Close the activity after the request is sent
                         })
                         .addOnFailureListener(e -> {
                             Toast.makeText(BookingActivity.this, "Failed to send booking request", Toast.LENGTH_SHORT).show();
@@ -82,7 +85,6 @@ public class BookingActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
@@ -104,10 +106,10 @@ public class BookingActivity extends AppCompatActivity {
         }
     };
 
-    private void insertData(String date, String timeSlot, String name, String department, String purpose) {
+    private void insertData(String date, List<String> timeSlots, String name, String department, String purpose) {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.BookingEntry.COLUMN_DATE, date);
-        values.put(DatabaseHelper.BookingEntry.COLUMN_TIME_SLOT, timeSlot);
+        values.put(DatabaseHelper.BookingEntry.COLUMN_TIME_SLOT, String.join(", ", timeSlots)); // Store time slots as a single string
         values.put(DatabaseHelper.BookingEntry.COLUMN_NAME, name);
         values.put(DatabaseHelper.BookingEntry.COLUMN_DEPARTMENT, department);
         values.put(DatabaseHelper.BookingEntry.COLUMN_PURPOSE, purpose);
@@ -116,7 +118,6 @@ public class BookingActivity extends AppCompatActivity {
 
         if (newRowId != -1) {
             Toast.makeText(this, "Booking request saved locally", Toast.LENGTH_SHORT).show();
-
         } else {
             Toast.makeText(this, "Error saving request locally", Toast.LENGTH_SHORT).show();
         }

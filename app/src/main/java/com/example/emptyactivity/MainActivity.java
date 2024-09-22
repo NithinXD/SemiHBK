@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import androidx.annotation.NonNull;
-
+import android.util.Log;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -38,7 +41,11 @@ public class MainActivity extends AppCompatActivity {
         EditText editTextPassword = findViewById(R.id.editTextPassword);
         Switch switchLoginMode = findViewById(R.id.switchLoginMode);
         TextView textViewRegister = findViewById(R.id.textViewRegister);
-
+        TextView textViewForgotPassword = findViewById(R.id.textViewForgotPassword);
+        textViewForgotPassword.setOnClickListener(v -> {
+            // Show forgot password dialog
+            showForgotPasswordDialog();
+        });
         // Listen to switch changes
         switchLoginMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isAdminMode = isChecked;
@@ -89,17 +96,57 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    // Method to show Forgot Password dialog
+    private void showForgotPasswordDialog() {
+        // Create an EditText to get the email
+        final EditText resetEmail = new EditText(this);
+        resetEmail.setHint("Enter your email");
+
+        // Create a dialog
+        new AlertDialog.Builder(this)
+                .setTitle("Forgot Password")
+                .setMessage("Enter your email to receive a password reset link.")
+                .setView(resetEmail)
+                .setPositiveButton("Send", (dialog, which) -> {
+                    // Get the email entered by the user
+                    String email = resetEmail.getText().toString().trim();
+                    if (email.isEmpty()) {
+                        Toast.makeText(MainActivity.this, "Please enter an email address", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    // Send password reset email
+                    sendPasswordResetEmail(email);
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    // Method to send password reset email using Firebase
+    private void sendPasswordResetEmail(String email) {
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(MainActivity.this, "Password reset link sent to " + email, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Failed to send reset link: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
     private void handleUserLogin(String username, String password) {
+        Log.d("UserLogin", "Username: " + username);
         mAuth.signInWithEmailAndPassword(username, password).addOnSuccessListener(authResult -> {
-            startActivity(new Intent(MainActivity.this, NextActivity.class));
+            Intent intent = new Intent(MainActivity.this, HallSelectionActivity.class);
+            intent.putExtra("username", username); // Add the username as an extra
+            startActivity(intent);
         }).addOnFailureListener(e -> {
             Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
 
     private void handleAdminLogin(String username, String password) {
-        if (username.equals("marit@tce.edu") && password.equals("akila@123")) {
+            if (username.equals("marit@tce.edu") && password.equals("akila@123")) {
             mAuth.signInWithEmailAndPassword(username, password)
                     .addOnSuccessListener(authResult -> {
                         startActivity(new Intent(MainActivity.this, AdminDashboardActivity.class));

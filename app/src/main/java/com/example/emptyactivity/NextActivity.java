@@ -2,12 +2,14 @@ package com.example.emptyactivity;
 
 import android.app.DatePickerDialog;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.content.Intent;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +29,8 @@ public class NextActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private EditText editTextDate;
-    private String selectedTime;
+    private List<String> selectedTimeSlots;
+    private String selectedHall;
     private List<String> bookedTimeSlots;
     private List<String> pendingTimeSlots;
     private Button bookButton;
@@ -40,6 +43,13 @@ public class NextActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_next);
 
+        // Initialize the selectedTimeSlots list
+        selectedTimeSlots = new ArrayList<>();  // Initialize the list here
+
+        Intent intent = getIntent();
+        selectedHall = intent.getStringExtra("SELECTED_HALL");  //Nithin Hall
+        TextView textViewHall = findViewById(R.id.textViewHall);
+        textViewHall.setText("Selected Hall: " + selectedHall);
         editTextDate = findViewById(R.id.editTextDate);
         myCalendar = Calendar.getInstance();
         frameLayout = findViewById(R.id.frameLayout);
@@ -68,37 +78,53 @@ public class NextActivity extends AppCompatActivity {
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show());
 
         // Set click listener for all buttons inside frameLayout
+        // Set click listener for all buttons inside frameLayout
         for (int i = 4; i <= 12; i++) {
             int buttonId = getResources().getIdentifier("button" + i, "id", getPackageName());
             Button but = findViewById(buttonId);
             but.setOnClickListener(v -> {
-                if (selectedButton != null) {
-                    selectedButton.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark)); // Reset previous selection
+                // Check if the button is red (booked)
+                if (((ColorDrawable) v.getBackground()).getColor() == Color.RED) {
+                    Toast.makeText(NextActivity.this, "This time slot is booked and cannot be selected", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-                v.setBackgroundColor(getResources().getColor(R.color.blue)); // Set clicked button to blue
-                selectedButton = (Button) v;
-                selectedTime = ((Button) v).getText().toString();
+
+                // Allow selection for other colors (e.g., yellow for pending)
+                String selectedTime = ((Button) v).getText().toString();
+
+                if (selectedTimeSlots.contains(selectedTime)) {
+                    // If the time slot is already selected, unselect it
+                    selectedTimeSlots.remove(selectedTime);
+                    v.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark)); // Reset to default color
+                } else {
+                    // Select the time slot
+                    selectedTimeSlots.add(selectedTime);
+                    v.setBackgroundColor(getResources().getColor(R.color.blue)); // Mark as selected
+                }
             });
         }
+
 
         bookButton.setOnClickListener(v -> {
             if (!isDateEntered()) {
                 Toast.makeText(NextActivity.this, "Please enter the date", Toast.LENGTH_SHORT).show();
-            } else if (selectedTime == null) {
-                Toast.makeText(NextActivity.this, "Please select a time slot", Toast.LENGTH_SHORT).show();
-            } else if (isSlotPending(selectedTime) || isSlotBooked(selectedTime)) {
-                String statusMessage = isSlotPending(selectedTime) ? "pending" : "booked";
-                Toast.makeText(NextActivity.this, "This slot is " + statusMessage + ". Please choose another slot.", Toast.LENGTH_SHORT).show();
+            } else if (selectedTimeSlots.isEmpty()) {
+                Toast.makeText(NextActivity.this, "Please select at least one time slot", Toast.LENGTH_SHORT).show();
             } else {
+                // Check if any of the selected slots are booked or pending
+                for (String timeSlot : selectedTimeSlots) {
+                    if (isSlotPending(timeSlot) || isSlotBooked(timeSlot)) {
+                        String statusMessage = isSlotPending(timeSlot) ? "pending" : "booked";
+                        Toast.makeText(NextActivity.this, "Time slot " + timeSlot + " is " + statusMessage + ". Please choose another slot.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                // If all slots are available, navigate to booking activity
                 navigateToBookingActivity();
             }
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        showExitConfirmationDialog();
-    }
 
     private void showExitConfirmationDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -162,18 +188,24 @@ public class NextActivity extends AppCompatActivity {
     }
 
     private void checkBookedTimeSlots() {
-        // Reset button colors to default initially
         resetButtons();
 
         String selectedDate = editTextDate.getText().toString();
+        String selectedHall = getIntent().getStringExtra("SELECTED_HALL");
 
         if (selectedDate.isEmpty()) {
             Toast.makeText(NextActivity.this, "Please select a date", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        if (selectedHall == null) {
+            Toast.makeText(NextActivity.this, "Selected hall is missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         db.collection("bookings")
                 .whereEqualTo("date", selectedDate)
+                .whereEqualTo("hall", selectedHall)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -188,7 +220,7 @@ public class NextActivity extends AppCompatActivity {
                                 } else if (status.equals("pending")) {
                                     pendingTimeSlots.add(bookedTimeSlot);
                                 }
-                                // Correctly identify and update the button color
+                                // Update button color
                                 int buttonId = getButtonIdFromTimeSlot(bookedTimeSlot);
                                 if (buttonId != -1) {
                                     Button button = findViewById(buttonId);
@@ -209,19 +241,30 @@ public class NextActivity extends AppCompatActivity {
     }
 
 
+
     private int getButtonIdFromTimeSlot(String timeSlot) {
         // Assuming time slots are formatted as "9.00-10.00" and match button IDs from 4 to 12
         switch (timeSlot) {
-            case "9.00-10.00": return R.id.button4;
-            case "10.00-11.00": return R.id.button5;
-            case "11.00-11.15": return R.id.button6;
-            case "11.15-12.15": return R.id.button7;
-            case "12.15-1.15": return R.id.button8;
-            case "1.15-2.15": return R.id.button9;
-            case "2.15-3.15": return R.id.button10;
-            case "3.15-4.15": return R.id.button11;
-            case "4.15-5.00": return R.id.button12;
-            default: return -1; // Invalid time slot
+            case "9.00-10.00":
+                return R.id.button4;
+            case "10.00-11.00":
+                return R.id.button5;
+            case "11.00-11.15":
+                return R.id.button6;
+            case "11.15-12.15":
+                return R.id.button7;
+            case "12.15-1.15":
+                return R.id.button8;
+            case "1.15-2.15":
+                return R.id.button9;
+            case "2.15-3.15":
+                return R.id.button10;
+            case "3.15-4.15":
+                return R.id.button11;
+            case "4.15-5.00":
+                return R.id.button12;
+            default:
+                return -1; // Invalid time slot
         }
     }
 
@@ -232,6 +275,7 @@ public class NextActivity extends AppCompatActivity {
             but.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark)); // Reset to default color
         }
     }
+
 
 
     private boolean isSlotBooked(String timeSlot) {
@@ -247,9 +291,26 @@ public class NextActivity extends AppCompatActivity {
     }
 
     private void navigateToBookingActivity() {
-        Intent intent = new Intent(NextActivity.this, BookingActivity.class);
-        intent.putExtra("selected_date", editTextDate.getText().toString());
-        intent.putExtra("selected_time_slot", selectedTime);
+        Intent intent;
+        if (selectedHall.equals("KK Hall") || selectedHall.equals("KS Hall")) {
+            // Navigate to SpecialBookingActivity if the selected hall is "KK Hall" or "KS Hall"
+            intent = new Intent(NextActivity.this, SpecialBookingActivity.class);
+            // Put extras for SpecialBookingActivity
+            intent.putExtra("username", getIntent().getStringExtra("username")); // Pass username
+            intent.putExtra("selected_date", editTextDate.getText().toString());
+            intent.putStringArrayListExtra("selected_time_slots", new ArrayList<>(selectedTimeSlots));
+            intent.putExtra("selected_hall", selectedHall);
+        } else {
+            // Navigate to BookingActivity for all other halls
+            intent = new Intent(NextActivity.this, BookingActivity.class);
+            intent.putExtra("username", getIntent().getStringExtra("username")); // Pass username
+            intent.putExtra("selected_date", editTextDate.getText().toString());
+            intent.putStringArrayListExtra("selected_time_slots", new ArrayList<>(selectedTimeSlots));
+            intent.putExtra("selected_hall", selectedHall);
+        }
+
         startActivity(intent);
+
     }
 }
+

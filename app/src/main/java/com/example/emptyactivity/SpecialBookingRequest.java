@@ -2,28 +2,32 @@ package com.example.emptyactivity;
 
 import java.util.List;
 
-public class BookingRequest {
+public class SpecialBookingRequest {
     private String name;
     private String department;
     private String purpose;
     private String date;
     private String hall;
-    private List<String> timeSlots; // Changed to List of time slots
+    private List<String> timeSlots; // Updated to List
     private String status;
+    private int numberOfChairs;
+    private boolean audioSystem;
     private String userEmail;
 
-    // Constructor to handle multiple time slots
-    public BookingRequest(String name, String department, String purpose, String date, String hall, List<String> timeSlots, String status, String userEmail) {
+    public SpecialBookingRequest(String name, String department, String purpose, String date, String hall, List<String> timeSlots, String status, int numberOfChairs, boolean audioSystem, String userEmail) {
         this.name = name;
         this.department = department;
         this.purpose = purpose;
         this.date = date;
         this.hall = hall;
-        this.timeSlots = timeSlots; // Set the list of time slots
+        this.timeSlots = timeSlots;
         this.status = status;
+        this.numberOfChairs = numberOfChairs;
+        this.audioSystem = audioSystem;
         this.userEmail = userEmail;
     }
 
+    // Getter methods for Firestore
     public String getName() {
         return name;
     }
@@ -44,12 +48,20 @@ public class BookingRequest {
         return hall;
     }
 
-    public List<String> getTimeSlots() { // Get the list of time slots
+    public List<String> getTimeSlots() {
         return timeSlots;
     }
 
     public String getStatus() {
         return status;
+    }
+
+    public int getNumberOfChairs() {
+        return numberOfChairs;
+    }
+
+    public boolean isAudioSystem() {
+        return audioSystem;
     }
 
     public String getUserEmail() {
