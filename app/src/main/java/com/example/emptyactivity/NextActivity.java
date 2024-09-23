@@ -212,23 +212,28 @@ public class NextActivity extends AppCompatActivity {
                         bookedTimeSlots.clear();
                         pendingTimeSlots.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            String bookedTimeSlot = document.getString("timeSlot");
+                            // Retrieve the list of time slots
+                            List<String> timeSlotsArray = (List<String>) document.get("timeSlots");
                             String status = document.getString("status");
-                            if (bookedTimeSlot != null && status != null) {
-                                if (status.equals("approved")) {
-                                    bookedTimeSlots.add(bookedTimeSlot);
-                                } else if (status.equals("pending")) {
-                                    pendingTimeSlots.add(bookedTimeSlot);
-                                }
-                                // Update button color
-                                int buttonId = getButtonIdFromTimeSlot(bookedTimeSlot);
-                                if (buttonId != -1) {
-                                    Button button = findViewById(buttonId);
-                                    if (button != null) {
-                                        if (status.equals("approved")) {
-                                            button.setBackgroundColor(Color.RED); // Approved bookings in red
-                                        } else if (status.equals("pending")) {
-                                            button.setBackgroundColor(Color.YELLOW); // Pending bookings in yellow
+
+                            if (timeSlotsArray != null && status != null) {
+                                for (String bookedTimeSlot : timeSlotsArray) {
+                                    if (status.equals("approved")) {
+                                        bookedTimeSlots.add(bookedTimeSlot);
+                                    } else if (status.equals("pending")) {
+                                        pendingTimeSlots.add(bookedTimeSlot);
+                                    }
+
+                                    // Update button color for each time slot in the array
+                                    int buttonId = getButtonIdFromTimeSlot(bookedTimeSlot);
+                                    if (buttonId != -1) {
+                                        Button button = findViewById(buttonId);
+                                        if (button != null) {
+                                            if (status.equals("approved")) {
+                                                button.setBackgroundColor(Color.RED); // Approved bookings in red
+                                            } else if (status.equals("pending")) {
+                                                button.setBackgroundColor(Color.YELLOW); // Pending bookings in yellow
+                                            }
                                         }
                                     }
                                 }
@@ -239,6 +244,7 @@ public class NextActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
 
 

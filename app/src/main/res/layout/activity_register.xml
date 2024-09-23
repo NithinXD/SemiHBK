@@ -51,7 +51,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.72" />
+        app:layout_constraintVertical_bias="0.831" />
+
+    <EditText
+        android:id="@+id/editTextPhone"
+        android:layout_width="335dp"
+        android:layout_height="48dp"
+        android:hint="Enter Phone Number"
+        android:inputType="phone"
+        android:textColor="@color/black"
+        android:textColorHint="#4C4C4C"
+        app:layout_constraintTop_toBottomOf="@id/editTextPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
 
     <ImageView
         android:id="@+id/imageView2"

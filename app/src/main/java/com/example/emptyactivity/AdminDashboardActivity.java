@@ -1,7 +1,11 @@
 package com.example.emptyactivity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -10,12 +14,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,6 +38,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private LinearLayout bookingsLayout;
     private Spinner hallFilterSpinner;
     private String selectedHallFilter = "All"; // Default filter is "All" to show all halls
+    private static final String ADMIN_PHONE_NUMBER = "7904502598"; // Hardcoded admin phone number
+    private static final int PERMISSION_REQUEST_SEND_SMS = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +72,11 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         // Fetch all pending bookings on start
         fetchPendingBookings();
+
+        // Check if the app has SMS permission, and request it if not
+        if (!checkPermission()) {
+            requestPermission();
+        }
     }
 
     @Override
@@ -136,13 +148,20 @@ public class AdminDashboardActivity extends AppCompatActivity {
                             StringBuilder bookingDetails = new StringBuilder();
                             bookingDetails.append("Date: ").append(date).append("\n");
                             bookingDetails.append("Time Slots:\n").append(timeSlotsFormatted.toString());
-                            if (name != null) bookingDetails.append("Name: ").append(name).append("\n");
-                            if (department != null) bookingDetails.append("Department: ").append(department).append("\n");
-                            if (purpose != null) bookingDetails.append("Purpose: ").append(purpose).append("\n");
-                            if (hall != null) bookingDetails.append("Hall: ").append(hall).append("\n");
-                            if (numberOfChairs != null) bookingDetails.append("Number of Chairs: ").append(numberOfChairs).append("\n");
-                            if (audioSystem != null) bookingDetails.append("Audio System: ").append(audioSystem ? "Yes" : "No").append("\n");
-                            if (userEmail != null) bookingDetails.append("User Email: ").append(userEmail).append("\n");
+                            if (name != null)
+                                bookingDetails.append("Name: ").append(name).append("\n");
+                            if (department != null)
+                                bookingDetails.append("Department: ").append(department).append("\n");
+                            if (purpose != null)
+                                bookingDetails.append("Purpose: ").append(purpose).append("\n");
+                            if (hall != null)
+                                bookingDetails.append("Hall: ").append(hall).append("\n");
+                            if (numberOfChairs != null)
+                                bookingDetails.append("Number of Chairs: ").append(numberOfChairs).append("\n");
+                            if (audioSystem != null)
+                                bookingDetails.append("Audio System: ").append(audioSystem ? "Yes" : "No").append("\n");
+                            if (userEmail != null)
+                                bookingDetails.append("User Email: ").append(userEmail).append("\n");
 
                             View bookingView = getLayoutInflater().inflate(R.layout.booking_item, null);
                             TextView bookingDetailsTextView = bookingView.findViewById(R.id.bookingDetailsTextView);
@@ -181,19 +200,123 @@ public class AdminDashboardActivity extends AppCompatActivity {
     }
 
     private void notifyUser(String bookingId, String status) {
+        // First, get the userEmail from the bookings collection using the bookingId
         db.collection("bookings")
                 .document(bookingId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String userEmail = documentSnapshot.getString("userEmail");
+                        String date = documentSnapshot.getString("date");
+                        List<String> timeSlots = (List<String>) documentSnapshot.get("timeSlots");
+                        String name = documentSnapshot.getString("name");
+                        String department = documentSnapshot.getString("department");
+                        String purpose = documentSnapshot.getString("purpose");
+                        String hall = documentSnapshot.getString("hall");
+                        Long numberOfChairs = documentSnapshot.getLong("numberOfChairs");
+                        Boolean audioSystem = documentSnapshot.getBoolean("audioSystem");
+
                         if (userEmail != null) {
-                            // Here you would send a notification or an email to the user
-                            // For simplicity, let's just show a Toast
-                            String message = "Booking " + status + ": " + userEmail;
-                            Toast.makeText(AdminDashboardActivity.this, message, Toast.LENGTH_SHORT).show();
+                            // Now, use the userEmail to query the Users collection to get the phone number
+                            db.collection("Users")
+                                    .whereEqualTo("email", userEmail) // Use the email to query Users collection
+                                    .get()
+                                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                                        if (!queryDocumentSnapshots.isEmpty()) {
+                                            // Assuming there's only one user document with the given email
+                                            QueryDocumentSnapshot userDocument = (QueryDocumentSnapshot) queryDocumentSnapshots.getDocuments().get(0);
+                                            String userPhoneNumber = userDocument.getString("phone");
+                                            if (userPhoneNumber != null) {
+                                                // Prepare the booking details for WhatsApp message
+                                                StringBuilder bookingDetails = new StringBuilder();
+                                                bookingDetails.append("Booking ").append(status).append("!\n");
+                                                bookingDetails.append("Date: ").append(date).append("\n");
+                                                bookingDetails.append("Time Slots: ").append(timeSlots).append("\n");
+                                                bookingDetails.append("Name: ").append(name).append("\n");
+                                                bookingDetails.append("Department: ").append(department).append("\n");
+                                                bookingDetails.append("Purpose: ").append(purpose).append("\n");
+                                                bookingDetails.append("Hall: ").append(hall).append("\n");
+                                                if (numberOfChairs != null) {
+                                                    bookingDetails.append("Number of Chairs: ").append(numberOfChairs).append("\n");
+                                                }
+                                                if (audioSystem != null) {
+                                                    bookingDetails.append("Audio System: ").append(audioSystem ? "Yes" : "No").append("\n");
+                                                }
+                                                bookingDetails.append("Congratulations! Your booking has been ").append(status).append(".");
+
+                                                // Send WhatsApp message
+                                                sendWhatsAppMessage(userPhoneNumber, bookingDetails.toString());
+
+                                                // Display the phone number in a Toast
+                                                String message = "Booking " + status + " for user " + userEmail + " with phone number: " + userPhoneNumber;
+                                                Toast.makeText(AdminDashboardActivity.this, message, Toast.LENGTH_LONG).show();
+                                            } else {
+                                                Toast.makeText(AdminDashboardActivity.this, "Phone number not found for " + userEmail, Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else {
+                                            Toast.makeText(AdminDashboardActivity.this, "User with email " + userEmail + " not found in Users collection", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(AdminDashboardActivity.this, "Error retrieving user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(AdminDashboardActivity.this, "Email not found in booking document", Toast.LENGTH_SHORT).show();
                         }
                     }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(AdminDashboardActivity.this, "Failed to get booking details: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void sendWhatsAppMessage(String phoneNumber, String message) {
+        try {
+            // Replace '+' with '%2B' and any spaces with '%20' to ensure the phone number and message are URL-encoded
+            String encodedPhoneNumber = phoneNumber.replace("+", "%2B");
+            String encodedMessage = message.replace(" ", "%20");
+
+            // Create the WhatsApp URL with the phone number and message
+            String url = "https://api.whatsapp.com/send?phone=" + encodedPhoneNumber + "&text=" + encodedMessage;
+
+            // Create an intent to open WhatsApp
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            intent.setPackage("com.whatsapp");
+
+            // Check if WhatsApp is installed
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+                Toast.makeText(this, "Opening WhatsApp...", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "WhatsApp is not installed on your device", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Failed to open WhatsApp. Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    // Method to check if SMS permission is granted
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    // Method to request SMS permission
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, PERMISSION_REQUEST_SEND_SMS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_SEND_SMS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission granted to send SMS", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Permission denied to send SMS", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

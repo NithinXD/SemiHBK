@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Seminar Hall Booking Application"
+            android:text="TCE HALL BOOKING APP"
             android:textColor="#007BFF"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -160,7 +160,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="Srisa T G"
+            android:text="Srisa T G [917721IT102]"
             android:textColor="#FFB443D3"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -173,7 +173,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Naga Harshini K K"
+            android:text="Naga Harshini K K [917721IT069]"
             android:textColor="#B443D3"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -182,6 +182,21 @@
             app:layout_constraintTop_toBottomOf="@id/textDeveloperName1" />
 
         <!-- App Description -->
+        <TextView
+            android:id="@+id/textDeveloperName3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="Nithin D [917722IT061]"
+            android:textColor="#B443D3"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.489"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textDeveloperName1" />
+
         <TextView
             android:id="@+id/textAppDescription"
             android:layout_width="0dp"

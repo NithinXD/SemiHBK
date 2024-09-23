@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#f8eeff"
     android:padding="16dp"
     android:gravity="center">
 
@@ -11,56 +12,56 @@
     <Button
         android:id="@+id/buttonKKHall"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:text="KK Hall" />
 
     <Button
         android:id="@+id/buttonKSHall"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:text="KS Hall" />
 
     <Button
         android:id="@+id/buttonHall1"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:text="IT Seminar Hall" />
 
     <Button
         android:id="@+id/buttonHall2"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:text="CSE Seminar Hall" />
 
     <Button
         android:id="@+id/buttonHall3"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:text="ECE Seminar Hall" />
 
     <Button
         android:id="@+id/buttonHall4"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:text="EEE Seminar Hall" />
 
     <Button
         android:id="@+id/buttonHall5"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:text="Civil Seminar Hall" />
 
     <Button
         android:id="@+id/buttonHall6"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="10dp"
         android:text="Mech Seminar Hall" />
 

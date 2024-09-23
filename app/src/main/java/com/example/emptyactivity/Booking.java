@@ -1,26 +1,29 @@
 package com.example.emptyactivity;
 
+import java.util.List;
+
 public class Booking {
     private String date;
     private String name;
     private String department;
     private String purpose;
     private String status;
-    private String timeSlot;
+    private List<String> timeSlots;
     private String userEmail;
-
+    private String hall;
     // Default constructor required for Firestore deserialization
     public Booking() {}
 
     // Constructor with parameters (optional, for manual creation)
-    public Booking(String name, String department, String purpose, String date, String timeSlot, String status, String userEmail) {
+    public Booking(String name, String department, String purpose, String date, List<String> timeSlots, String status, String userEmail, String hall) {
         this.name = name;
         this.department = department;
         this.purpose = purpose;
         this.date = date;
-        this.timeSlot = timeSlot;
+        this.timeSlots = timeSlots;
         this.status = status;
         this.userEmail = userEmail;
+        this.hall = hall;
     }
 
     // Getter methods
@@ -40,8 +43,13 @@ public class Booking {
         return date;
     }
 
-    public String getTimeSlot() {
-        return timeSlot;
+    public String getHall() {
+        return hall;
+    }
+
+
+    public List<String> getTimeSlots() {
+        return timeSlots;
     }
 
     public String getStatus() {
@@ -57,6 +65,10 @@ public class Booking {
         this.name = name;
     }
 
+    public void setHall(String hall) {
+        this.hall = hall;
+    }
+
     public void setDepartment(String department) {
         this.department = department;
     }
@@ -69,8 +81,8 @@ public class Booking {
         this.date = date;
     }
 
-    public void setTimeSlot(String timeSlot) {
-        this.timeSlot = timeSlot;
+    public void setTimeSlot(List<String> timeSlots) {
+        this.timeSlots = timeSlots;
     }
 
     public void setStatus(String status) {

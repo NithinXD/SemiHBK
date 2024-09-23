@@ -105,7 +105,7 @@ public class Schedule extends AppCompatActivity {
                                 Booking booking = document.toObject(Booking.class);
                                 searchResults.add(new ListItem(
                                         R.drawable.ic_baseline_event_note_24,
-                                        "SLOT: " + booking.getTimeSlot(),
+                                        "SLOT: " + booking.getTimeSlots(),
                                         "Booked By: " + booking.getName() + " " + booking.getDepartment() + ""
                                 ));
                             }
