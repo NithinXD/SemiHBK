@@ -2,7 +2,6 @@ package com.example.emptyactivity;
 
 import android.app.DatePickerDialog;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -78,32 +77,32 @@ public class NextActivity extends AppCompatActivity {
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show());
 
         // Set click listener for all buttons inside frameLayout
-        // Set click listener for all buttons inside frameLayout
         for (int i = 4; i <= 12; i++) {
             int buttonId = getResources().getIdentifier("button" + i, "id", getPackageName());
             Button but = findViewById(buttonId);
+            but.setTag("available"); // Set initial tag to "available"
             but.setOnClickListener(v -> {
-                // Check if the button is red (booked)
-                if (((ColorDrawable) v.getBackground()).getColor() == Color.RED) {
+                String status = (String) v.getTag();
+                if (status.equals("booked")) {
                     Toast.makeText(NextActivity.this, "This time slot is booked and cannot be selected", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Allow selection for other colors (e.g., yellow for pending)
                 String selectedTime = ((Button) v).getText().toString();
 
                 if (selectedTimeSlots.contains(selectedTime)) {
                     // If the time slot is already selected, unselect it
                     selectedTimeSlots.remove(selectedTime);
-                    v.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark)); // Reset to default color
+                    v.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark)); // Reset to available color
+                    v.setTag("available");
                 } else {
                     // Select the time slot
                     selectedTimeSlots.add(selectedTime);
                     v.setBackgroundColor(getResources().getColor(R.color.blue)); // Mark as selected
+                    v.setTag("selected");
                 }
             });
         }
-
 
         bookButton.setOnClickListener(v -> {
             if (!isDateEntered()) {
@@ -125,66 +124,12 @@ public class NextActivity extends AppCompatActivity {
         });
     }
 
-
-    private void showExitConfirmationDialog() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Alert");
-        alertDialogBuilder.setIcon(R.drawable.ic_baseline_announcement_24);
-        alertDialogBuilder.setMessage("Do you want to exit?");
-        alertDialogBuilder.setCancelable(false);
-
-        alertDialogBuilder.setPositiveButton("Yes", (dialog, which) -> finishAffinity()); // Exit from the app
-
-        alertDialogBuilder.setNegativeButton("No", (dialog, which) -> dialog.dismiss()); // Dismiss the dialog and remain on the same page
-
-        // Create and show the alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.item_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.Bookingmenu:
-                Toast.makeText(this, "View Bookings", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, Schedule.class));
-                return true;
-            case R.id.Aboutmenu:
-                Toast.makeText(this, "View Bookings", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, AboutUsActivity.class));
-                return true;
-
-
-            case R.id.logoutmenu:
-                Toast.makeText(this, "Logout page", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, MainActivity.class));
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Recheck booked time slots when the activity is resumed
-        checkBookedTimeSlots();
-    }
-
-
     private void updateDate() {
         String myFormat = "dd/MM/yyyy"; // Change date format as needed
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         editTextDate.setText(sdf.format(myCalendar.getTime()));
         resetButtons();
+        selectedTimeSlots.clear(); // Clear the selected time slots when date is changed
     }
 
     private void checkBookedTimeSlots() {
@@ -224,15 +169,17 @@ public class NextActivity extends AppCompatActivity {
                                         pendingTimeSlots.add(bookedTimeSlot);
                                     }
 
-                                    // Update button color for each time slot in the array
+                                    // Update button color and tag for each time slot in the array
                                     int buttonId = getButtonIdFromTimeSlot(bookedTimeSlot);
                                     if (buttonId != -1) {
                                         Button button = findViewById(buttonId);
                                         if (button != null) {
                                             if (status.equals("approved")) {
                                                 button.setBackgroundColor(Color.RED); // Approved bookings in red
+                                                button.setTag("booked");
                                             } else if (status.equals("pending")) {
                                                 button.setBackgroundColor(Color.YELLOW); // Pending bookings in yellow
+                                                button.setTag("pending");
                                             }
                                         }
                                     }
@@ -245,44 +192,41 @@ public class NextActivity extends AppCompatActivity {
                 });
     }
 
-
-
-
     private int getButtonIdFromTimeSlot(String timeSlot) {
-        // Assuming time slots are formatted as "9.00-10.00" and match button IDs from 4 to 12
+        // Updated to match the new time slot strings with AM/PM
         switch (timeSlot) {
-            case "9.00-10.00":
+            case "9.00 AM - 10.00 AM":
                 return R.id.button4;
-            case "10.00-11.00":
+            case "10.00 AM - 11.00 AM":
                 return R.id.button5;
-            case "11.00-11.15":
+            case "11.00 AM - 11.15 AM":
                 return R.id.button6;
-            case "11.15-12.15":
+            case "11.15 AM - 12.15 PM":
                 return R.id.button7;
-            case "12.15-1.15":
+            case "12.15 PM - 1.15 PM":
                 return R.id.button8;
-            case "1.15-2.15":
+            case "1.15 PM - 2.15 PM":
                 return R.id.button9;
-            case "2.15-3.15":
+            case "2.15 PM - 3.15 PM":
                 return R.id.button10;
-            case "3.15-4.15":
+            case "3.15 PM - 4.15 PM":
                 return R.id.button11;
-            case "4.15-5.00":
+            case "4.15 PM - 5.00 PM":
                 return R.id.button12;
             default:
                 return -1; // Invalid time slot
         }
     }
 
+
     private void resetButtons() {
         for (int i = 4; i <= 12; i++) {
             int buttonId = getResources().getIdentifier("button" + i, "id", getPackageName());
             Button but = findViewById(buttonId);
             but.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark)); // Reset to default color
+            but.setTag("available"); // Reset tag to "available"
         }
     }
-
-
 
     private boolean isSlotBooked(String timeSlot) {
         return bookedTimeSlots.contains(timeSlot);
@@ -316,7 +260,56 @@ public class NextActivity extends AppCompatActivity {
         }
 
         startActivity(intent);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Recheck booked time slots and clear selected slots when the activity is resumed
+        checkBookedTimeSlots();
+        selectedTimeSlots.clear(); // Clear the selected time slots when returning to this page
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.item_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.Bookingmenu:
+                Toast.makeText(this, "View Bookings", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, Schedule.class));
+                return true;
+            case R.id.Aboutmenu:
+                Toast.makeText(this, "View Bookings", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, AboutUsActivity.class));
+                return true;
+            case R.id.logoutmenu:
+                Toast.makeText(this, "Logout page", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, MainActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showExitConfirmationDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Alert");
+        alertDialogBuilder.setIcon(R.drawable.ic_baseline_announcement_24);
+        alertDialogBuilder.setMessage("Do you want to exit?");
+        alertDialogBuilder.setCancelable(false);
+
+        alertDialogBuilder.setPositiveButton("Yes", (dialog, which) -> finishAffinity()); // Exit from the app
+
+        alertDialogBuilder.setNegativeButton("No", (dialog, which) -> dialog.dismiss()); // Dismiss the dialog and remain on the same page
+
+        // Create and show the alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }
-

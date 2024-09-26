@@ -41,15 +41,15 @@
     <string name="update">UPDATE</string>
 
     <!-- Strings for time slots -->
-    <string name="time_slot_1">9.00-10.00</string>
-    <string name="time_slot_2">10.00-11.00</string>
-    <string name="time_slot_3">11.00-11.15</string>
-    <string name="time_slot_4">11.15-12.15</string>
-    <string name="time_slot_5">12.15-1.15</string>
-    <string name="time_slot_6">1.15-2.15</string>
-    <string name="time_slot_7">2.15-3.15</string>
-    <string name="time_slot_8">3.15-4.15</string>
-    <string name="time_slot_9">4.15-5.00</string>
+    <string name="time_slot_1">9.00 AM - 10.00 AM</string>
+    <string name="time_slot_2">10.00 AM - 11.00 AM</string>
+    <string name="time_slot_3">11.00 AM - 11.15 AM</string>
+    <string name="time_slot_4">11.15 AM - 12.15 PM</string>
+    <string name="time_slot_5">12.15 PM - 1.15 PM</string>
+    <string name="time_slot_6">1.15 PM - 2.15 PM</string>
+    <string name="time_slot_7">2.15 PM - 3.15 PM</string>
+    <string name="time_slot_8">3.15 PM - 4.15 PM</string>
+    <string name="time_slot_9">4.15 PM - 5.00 PM</string>
 
     <!-- About Us Text -->
     <string name="about_us_text">

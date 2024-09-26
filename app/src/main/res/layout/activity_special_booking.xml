@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f8eeff"
+    android:textColor="@color/black"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -12,67 +13,95 @@
         android:layout_height="wrap_content"
         android:text="Selected Hall:"
         android:textSize="18sp"
+        android:textStyle="bold"
         android:paddingBottom="8dp"
+        android:textColor="@color/black"
         android:id="@+id/selectedHallTextView" />
 
     <TextView
         android:id="@+id/selectedTimeSlotsTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Selected Time Slots: "
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:text="Selected Time Slots: "
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="Enter Details: "
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/nameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/black"
+        android:backgroundTint="@android:color/black"
         android:hint="Enter Name" />
 
     <EditText
         android:id="@+id/departmentEditText"
         android:layout_width="match_parent"
+        android:textColor="@color/black"
         android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/black"
+        android:textColorHint="@color/black"
         android:hint="Enter Department" />
 
     <EditText
         android:id="@+id/purposeEditText"
         android:layout_width="match_parent"
+        android:textColor="@color/black"
+        android:backgroundTint="@android:color/black"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/black"
         android:hint="Purpose of Booking" />
 
     <EditText
         android:id="@+id/chairsEditText"
         android:layout_width="match_parent"
+        android:backgroundTint="@android:color/black"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"
         android:hint="Number of Chairs" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/black"
         android:text="Do you need an audio system?"
         android:textSize="18sp"
         android:paddingTop="8dp"
+        android:textColor="@color/black"
         android:paddingBottom="8dp" />
 
     <RadioGroup
         android:id="@+id/audioSystemRadioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
         android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radioYes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="Yes" />
 
         <RadioButton
             android:id="@+id/radioNo"
             android:layout_width="wrap_content"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:text="No" />
     </RadioGroup>

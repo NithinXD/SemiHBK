@@ -94,6 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
     // Method to save user data to Firestore
     private void saveUserToFirestore(String userId, String email, String phone) {
         Map<String, Object> user = new HashMap<>();
+        phone = "+91" + phone;
         user.put("email", email);
         user.put("phone", phone);
 
