@@ -49,7 +49,6 @@ public class BookingActivity extends AppCompatActivity {
         submitButton = findViewById(R.id.submitButton);
 
         // Set default value for departmentEditText
-        departmentEditText.setText("IT");
 
         // Initialize database
         DatabaseHelper dbHelper = new DatabaseHelper(this);

@@ -77,6 +77,7 @@ public class NextActivity extends AppCompatActivity {
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show());
 
         // Set click listener for all buttons inside frameLayout
+        // Set click listener for all buttons inside frameLayout
         for (int i = 4; i <= 12; i++) {
             int buttonId = getResources().getIdentifier("button" + i, "id", getPackageName());
             Button but = findViewById(buttonId);
@@ -85,6 +86,11 @@ public class NextActivity extends AppCompatActivity {
                 String status = (String) v.getTag();
                 if (status.equals("booked")) {
                     Toast.makeText(NextActivity.this, "This time slot is booked and cannot be selected", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (status.equals("pending")) {
+                    Toast.makeText(NextActivity.this, "This time slot is pending and cannot be selected", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -103,6 +109,7 @@ public class NextActivity extends AppCompatActivity {
                 }
             });
         }
+
 
         bookButton.setOnClickListener(v -> {
             if (!isDateEntered()) {
