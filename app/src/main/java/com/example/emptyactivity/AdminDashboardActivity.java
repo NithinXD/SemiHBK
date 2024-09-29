@@ -1,11 +1,8 @@
 package com.example.emptyactivity;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,15 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.rpc.Help;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +33,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private LinearLayout bookingsLayout;
     private Spinner hallFilterSpinner;
     private String selectedHallFilter = "All"; // Default filter is "All" to show all halls
-    private static final String ADMIN_PHONE_NUMBER = "7845078199"; // Hardcoded admin phone number
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,8 +160,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
                             bookingDetailsTextView.setText(bookingDetails.toString());
 
                             // Set up approve and reject button click listeners
-                            approveButton.setOnClickListener(v -> updateBookingStatus(id, "approved", bookingDetails.toString()));
-                            rejectButton.setOnClickListener(v -> updateBookingStatus(id, "rejected", bookingDetails.toString()));
+                            approveButton.setOnClickListener(v -> updateBookingStatus(id, "approved"));
+                            rejectButton.setOnClickListener(v -> updateBookingStatus(id, "rejected"));
 
                             // Add the booking view to the layout
                             bookingsLayout.addView(bookingView);
@@ -177,7 +170,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 });
     }
 
-    private void updateBookingStatus(String bookingId, String status, String bookingDetails) {
+    private void updateBookingStatus(String bookingId, String status) {
         DocumentReference bookingRef = db.collection("bookings").document(bookingId);
 
         Map<String, Object> updates = new HashMap<>();
@@ -187,24 +180,75 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     String message = status.equals("approved") ? "Booking Approved" : "Booking Rejected";
                     Toast.makeText(AdminDashboardActivity.this, message, Toast.LENGTH_SHORT).show();
-                    notifyUser(bookingId, status, bookingDetails);
+                    notifyUser(bookingId, status);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(AdminDashboardActivity.this, "Failed to update booking", Toast.LENGTH_SHORT).show();
                 });
     }
-    private void notifyUser(String bookingId, String status, String bookingDetails) {
-        // No need to retrieve data from Firestore, simply navigate to the Help activity
-        startHelpActivity();
+
+    private void notifyUser(String bookingId, String status) {
+        // First, get the userEmail from the bookings collection using the bookingId
+        db.collection("bookings")
+                .document(bookingId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String userEmail = documentSnapshot.getString("userEmail");
+                        String date = documentSnapshot.getString("date");
+                        List<String> timeSlots = (List<String>) documentSnapshot.get("timeSlots");
+                        String name = documentSnapshot.getString("name");
+                        String department = documentSnapshot.getString("department");
+                        String purpose = documentSnapshot.getString("purpose");
+                        String hall = documentSnapshot.getString("hall");
+                        Long numberOfChairs = documentSnapshot.getLong("numberOfChairs");
+                        Boolean audioSystem = documentSnapshot.getBoolean("audioSystem");
+
+                        if (userEmail != null) {
+                            // Send email notification
+                            StringBuilder emailBody = new StringBuilder();
+                            emailBody.append("Booking ").append(status).append("!\n");
+                            emailBody.append("Date: ").append(date).append("\n");
+                            emailBody.append("Time Slots: ").append(timeSlots).append("\n");
+                            emailBody.append("Name: ").append(name).append("\n");
+                            emailBody.append("Department: ").append(department).append("\n");
+                            emailBody.append("Purpose: ").append(purpose).append("\n");
+                            emailBody.append("Hall: ").append(hall).append("\n");
+                            if (numberOfChairs != null) {
+                                emailBody.append("Number of Chairs: ").append(numberOfChairs).append("\n");
+                            }
+                            if (audioSystem != null) {
+                                emailBody.append("Audio System: ").append(audioSystem ? "Yes" : "No").append("\n");
+                            }
+                            emailBody.append("Your booking has been ").append(status).append(".");
+
+                            // Send email
+                            sendEmail(userEmail, "Booking " + status, emailBody.toString());
+
+                            // Display confirmation Toast
+                            Toast.makeText(AdminDashboardActivity.this, "Email sent to " + userEmail, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(AdminDashboardActivity.this, "Email not found in booking document", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(AdminDashboardActivity.this, "Failed to get booking details: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
+    // Method to send email
+    private void sendEmail(String recipientEmail, String subject, String body) {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse("mailto:")); // Only email apps should handle this
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipientEmail});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, body);
 
-    private void startHelpActivity() {
-        // Create an intent to start HelpActivity
-        Intent intent = new Intent(this, Help.class);
-
-        // Start the activity with the intent
-        startActivity(intent);
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send email using..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+        }
     }
-
 }
