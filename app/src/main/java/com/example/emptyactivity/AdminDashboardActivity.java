@@ -22,6 +22,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.List;
@@ -155,6 +157,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                             TextView bookingDetailsTextView = bookingView.findViewById(R.id.bookingDetailsTextView);
                             Button approveButton = bookingView.findViewById(R.id.approveButton);
                             Button rejectButton = bookingView.findViewById(R.id.rejectButton);
+                            Button viewPermissionLetterButton = bookingView.findViewById(R.id.viewPermissionLetterButton); // New button
 
                             // Set the formatted text to the TextView
                             bookingDetailsTextView.setText(bookingDetails.toString());
@@ -163,12 +166,67 @@ public class AdminDashboardActivity extends AppCompatActivity {
                             approveButton.setOnClickListener(v -> updateBookingStatus(id, "approved"));
                             rejectButton.setOnClickListener(v -> updateBookingStatus(id, "rejected"));
 
+                            // Show the "View Permission Letter" button only for KK and KS Halls
+                            if ("KK Hall".equals(hall) || "KS Hall".equals(hall)) {
+                                viewPermissionLetterButton.setVisibility(View.VISIBLE); // Show button
+                                viewPermissionLetterButton.setOnClickListener(v -> {
+                                    if (timeSlots != null && !timeSlots.isEmpty()) {
+                                        // Pass the details to retrieve and view the PDF
+                                        String timeSlot = timeSlots.get(0); // Assuming first slot is used
+                                        viewPdfFromStorage(userEmail, date, hall, timeSlot);
+                                    } else {
+                                        Toast.makeText(AdminDashboardActivity.this, "No time slots available to retrieve PDF", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else {
+                                viewPermissionLetterButton.setVisibility(View.GONE); // Hide button for other halls
+                            }
+
                             // Add the booking view to the layout
                             bookingsLayout.addView(bookingView);
                         }
                     }
                 });
     }
+
+
+    private void viewPdfFromStorage(String email, String date, String hall, String timeSlot) {
+        // Replace invalid characters in email and date
+        String sanitizedEmail = email;
+        String sanitizedDate = date.replace("/", "-"); // Assuming date is in format like "27/11/2024"
+
+        // Construct the storage path: <email>/<date>/<hall>/<timeslot>/permission_letter.pdf
+        String pdfPath = sanitizedEmail + "/" + sanitizedDate + "/" + hall + "/" + timeSlot + "/permission_letter.pdf";
+        System.out.println(pdfPath);
+        // Get a reference to the PDF in Firebase Storage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference pdfRef = storage.getReference().child(pdfPath);
+
+        // Get the download URL for the PDF
+        pdfRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            // Open the PDF using an Intent
+            viewPdf(uri.toString());
+        }).addOnFailureListener(e -> {
+            Toast.makeText(AdminDashboardActivity.this, "Failed to retrieve PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+
+    // Method to view the PDF using the provided pdfUri
+    private void viewPdf(String pdfUri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(pdfUri), "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+        Intent chooser = Intent.createChooser(intent, "Open PDF");
+
+        try {
+            startActivity(chooser);
+        } catch (android.content.ActivityNotFoundException e) {
+            Toast.makeText(this, "No PDF viewer found. Please install a PDF viewer app.", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     private void updateBookingStatus(String bookingId, String status) {
         DocumentReference bookingRef = db.collection("bookings").document(bookingId);

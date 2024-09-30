@@ -72,13 +72,13 @@
         android:layout_height="wrap_content"
         android:textColorHint="@color/black"
         android:textColor="@color/black"
-        android:hint="Number of Chairs" />
+        android:hint="Number of Seats Needed" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColorHint="@color/black"
-        android:text="Do you need an audio system?"
+        android:text="Do you need audio/video system?"
         android:textSize="18sp"
         android:paddingTop="8dp"
         android:textColor="@color/black"
@@ -105,6 +105,14 @@
             android:layout_height="wrap_content"
             android:text="No" />
     </RadioGroup>
+
+    <Button
+        android:id="@+id/uploadPdfButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload Permission Letter PDF"
+        android:layout_marginTop="16dp" />
+
 
     <Button
         android:id="@+id/submitSpecialBookingButton"

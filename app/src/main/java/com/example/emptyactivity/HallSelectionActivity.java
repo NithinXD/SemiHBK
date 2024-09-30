@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class HallSelectionActivity extends AppCompatActivity {
@@ -24,7 +25,7 @@ public class HallSelectionActivity extends AppCompatActivity {
         Button buttonHall6 = findViewById(R.id.buttonHall6);
 
 
-        // Set click listeners for each button
+        // Set click listeners for KK and KS Hall buttons
         buttonKKHall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,47 +40,21 @@ public class HallSelectionActivity extends AppCompatActivity {
             }
         });
 
-        buttonHall1.setOnClickListener(new View.OnClickListener() {
+        // Set click listeners for other hall buttons to show "Not available yet" toast
+        View.OnClickListener showNotAvailableToast = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navigateToNextActivity("IT Seminar Hall");
+                Toast.makeText(HallSelectionActivity.this, "Not available yet", Toast.LENGTH_SHORT).show();
             }
-        });
+        };
 
-        buttonHall2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToNextActivity("CSE Seminar Hall");
-            }
-        });
-
-        buttonHall3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToNextActivity("ECE Seminar Hall");
-            }
-        });
-
-        buttonHall4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToNextActivity("EEE Seminar Hall");
-            }
-        });
-
-        buttonHall5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToNextActivity("Civil Seminar Hall");
-            }
-        });
-
-        buttonHall6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToNextActivity("Mech Seminar Hall");
-            }
-        });
+        // Disable other buttons by showing the toast
+        buttonHall1.setOnClickListener(showNotAvailableToast);
+        buttonHall2.setOnClickListener(showNotAvailableToast);
+        buttonHall3.setOnClickListener(showNotAvailableToast);
+        buttonHall4.setOnClickListener(showNotAvailableToast);
+        buttonHall5.setOnClickListener(showNotAvailableToast);
+        buttonHall6.setOnClickListener(showNotAvailableToast);
     }
 
     // Method to navigate to NextActivity with the selected hall name

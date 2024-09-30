@@ -1,5 +1,7 @@
 package com.example.emptyactivity;
 
+import android.net.Uri;
+
 import java.util.List;
 
 public class SpecialBookingRequest {
@@ -13,8 +15,9 @@ public class SpecialBookingRequest {
     private int numberOfChairs;
     private boolean audioSystem;
     private String userEmail;
+    private String pdfUri;
 
-    public SpecialBookingRequest(String name, String department, String purpose, String date, String hall, List<String> timeSlots, String status, int numberOfChairs, boolean audioSystem, String userEmail) {
+    public SpecialBookingRequest(String name, String department, String purpose, String date, String hall, List<String> timeSlots, String status, int numberOfChairs, boolean audioSystem, String userEmail, String pdfUri) {
         this.name = name;
         this.department = department;
         this.purpose = purpose;
@@ -25,6 +28,7 @@ public class SpecialBookingRequest {
         this.numberOfChairs = numberOfChairs;
         this.audioSystem = audioSystem;
         this.userEmail = userEmail;
+        this.pdfUri = pdfUri;
     }
 
     // Getter methods for Firestore
@@ -66,5 +70,9 @@ public class SpecialBookingRequest {
 
     public String getUserEmail() {
         return userEmail;
+    }
+
+    public String getPdfUri() {
+        return pdfUri;
     }
 }

@@ -56,6 +56,11 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
+            if (!email.endsWith("@tce.edu")) {
+                Toast.makeText(RegisterActivity.this, "Email invalid. Use College ID", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (password.length() < 6) {
                 Toast.makeText(RegisterActivity.this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show();
                 return;
